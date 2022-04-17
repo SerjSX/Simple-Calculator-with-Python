@@ -10,7 +10,8 @@ def calculatorSession():
 
     if number1 != 'exit':
         try:
-            number1I = int(number1)
+            number1cp = number1.replace(" ", "")
+            number1I = int(number1cp)
         except:
             print("You didn't enter a number! Exiting...")
             exit()
@@ -24,7 +25,8 @@ def calculatorSession():
 
     if number2 != 'exit':
         try:
-            number2I = int(number2)
+            number2cp = number2.replace(" ", "")
+            number2I = int(number2cp)
         except:
             print("You didn't enter a number! Exiting...")
             exit()

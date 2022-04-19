@@ -5,6 +5,7 @@ print("Welcome to Calculator!")
 print("")
 
 def calculatorSession():
+
     print("Please insert the first number you will calculate. If you want to exit just type exit instead.")
     number1 = input("First number: ")
 
@@ -48,46 +49,40 @@ def calculatorSession():
 
     def calculationMethod(calculation, number1, number2):
         if (calculation == '+' and number1I != 'null' and number2I != 'null'):
-            additionCalc = number1 + number2
             print("")
             print("--")
-            print(additionCalc)
+            print(number1 + number2)
             print("--")
             print("")
         elif (calculation == '-' and number1I != 'null' and number2I != 'null'):
-            subtractionCalc = number1 - number2
             print("")
             print("--")
-            print(subtractionCalc)
+            print(number1 - number2)
             print("--")
             print("")
         elif (calculation == '*' and number1I != 'null' and number2I != 'null'):
-            multiplyCalc = number1 * number2
             print("")
             print("--")
-            print(multiplyCalc)
+            print(number1 * number2)
             print("--")
             print("")
         elif (calculation == '/' and number2 != 0 and number1I != 'null' and number2I != 'null'):
-            divideCalc = number1 / number2
             print("")
             print("--")
-            print(divideCalc)
+            print(number1 / number2)
             print("--")
             print("")
         else:
             print("")
             print("--")
             print("This calculation is invalid.")
-            print("Possible reason 1: you tried dividing with 0. That's not possible and it results math error.")
+            print("Possible reason 1: you tried dividing with 0. That's not possible and it results math error, infinity!")
             print("Possible reason 2: you typed the word for the calculation method instead of the sign. Please use the sign as it's shorter and simpler.")
             print("--")
             print("")
 
-
     calculationMethod(calculation, number1I, number2I)
 
-    print("New session...")
     calculatorSession()
 
 calculatorSession()

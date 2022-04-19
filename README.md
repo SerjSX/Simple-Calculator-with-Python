@@ -8,7 +8,7 @@ Just a personal project done during learning Python.
 ### How to work with it...
 Everything is done by inserting values. 
 
-You first insert the first number you will calculate, and then the second number that you will calculate the first one with.
+You can insert up to 5 numbers to calculate.
 
 When you enter a letter instead of a number, it will tell you and break the operation.
 

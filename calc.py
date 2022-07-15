@@ -1,101 +1,128 @@
-print("\n--- Welcome to Calculator! ---\n")
+# This program consists of three important functions:
+#     1. askOperation(): runs first to ask user which operation he/she wants to do.
+#     2. askAmounts(pushOperation): asks user which numbers to calculate.
+#     3. calculatorSession(operation, numbers): this is where the calculation is being done.
+# 
+# Two secondary tier functions:
+#     1. exitProgram(): used to exit the program when you type "exit" as operation.
+#     2. errorMessages(): prompts to inform about possible error solutions.
 
-# This program consists of two functions: 
-#     1. PRIMARY function which is at the bottom of the page
-#     2. SECONDARY - calculatorSession(chosenOperation, numbersSet) 
-# The former operates first in order to ask for the inputs from the user, which later on passes
-# to the calculatorSession function with filling in the paremeters. The latter is used for 
-# the actual calculating processes which prints out the results at the end.
+# Used for exitProgram() function
+import sys
 
-# The below constant variable inputs are the calculation methods that the user can do 
-# calculations with.
-# There's addition, subtractions, multiplication, and division. Both by name and sign can be used.
-VALID_OPERATIONS = [ 
-    "+", "addition", "-", "subtraction", 
-    "*", "multiplication", "/", "division"
+print("\n--- Welcome to Calculator! ---\n") 
+
+# VALID_OPERATIONS constant consists of the operations that the program is capable of calculating
+# with. Includes addition +, subtraction -, multiplication *, division /.
+VALID_OPERATIONS = [
+    "+", "-",
+    "*", "/"
     ]
 
-# SECONDARY FUNCTION
-def calculatorSession(chosenOperation, numbersSet): 
+# operation_library variable consits of keywords for the signs in the VALID_OPERATIONS constant.
+# If the user input for the operation isn't found in VALID_OPERATIONS, it searches in this
+# dictionary instead.
+operation_library = {
+    "addition": "+",
+    "subtraction": "-",
+    "multiplication": "*",
+    "division": "/"
+    }
 
-# The variable below is used as the result of the calculations, at the end of the calculation it is 
-# printed. It starts with None indicating that it is empty and will be filled later on.
-    numbersTotal = None 
+# errorMessages() is a function that points out several possible error reasons, to be more precise. 
+def errorMessages():
+    print("Possible Error 1: You didn't type a number. You can't use words as number input.")
+    print("Possible Error 2: The operation you wanted to do is invalid, the program isn't capable of accomplishing it.")
+    print("Possible Error 3: You tried dividing by 0. This isn't possible and results an error.\n")
 
-# First chosen operation is if the chosen operation (+|-|*|/) is either 0 or 1 from the 
-# VALID_OPERATOR constant, which is addition.
-    if chosenOperation in VALID_OPERATIONS[0:2]:
-        for numbers in numbersSet: # for each number in numbersSet which we pushed from askUser...
-            if numbersTotal == None: # if the numbersTotal is None (always is at first)...
-                numbersTotal = numbers # set the first number as default
-            else: # if it isn't None...
-                numbersTotal = numbersTotal + numbers # do the calculation and asign it to the 
-                # numbersTotal variable, which already has the first number.
+# exitProgram() function is used for exiting the program.
+def exitProgram():
+    sys.exit("Program Exited")
 
-# Second chosen operation is if the chosen operation is either 2 or 3 from the VALID_OPERATOR
-# constant, which is subtraction.
-    elif chosenOperation in VALID_OPERATIONS[2:4]:
-        for numbers in numbersSet:
-            if numbersTotal == None:
-                numbersTotal = numbers
-            else:
-                numbersTotal = numbersTotal - numbers    
-
-# Third chosen operation is if the chosen operation is either 4 or 5 from the VALID_OPERATOR 
-# constant, which is multiplication.
-    elif chosenOperation in VALID_OPERATIONS[4:6]:
-        for numbers in numbersSet:
-            if numbersTotal == None:
-                numbersTotal = numbers
-            else:
-                numbersTotal = numbersTotal * numbers                            
-
-# Fourth chosen operation is if the chosen operation is either 6 or 7 from the VALID_OPERATOR
-# constant, which is division.
-    elif chosenOperation in VALID_OPERATIONS[6:8]:
-        for numbers in numbersSet:
-            try: # Try this function, because if the user inserts 0 as second number it'll show error.
-                if numbersTotal == None:
-                    numbersTotal = numbers
-                else:
-                    numbersTotal = numbersTotal / numbers
-
-            except: # Hence if error is shown, it points out that you can't divide by 0!
-                print("\n --- Error: You can't divide by 0! --- \n")
-                exit()
-
+# calculatorSession(operation, numbers) function is used to do the actual calculating. This is 
+# run at the end of the program after the inputs are done by the user.
+def calculatorSession(operation, numbers):
+    
+    # This is the total result of the calculation. It is printed when everything is done.
+    numbersTotal = 0 
+    
+    # For each number in the numbers paremeter that was pushed from askAmounts function...
+    for number in numbers:
+        if numbersTotal == 0: # If the numbersTotal is 0...
+            numbersTotal = number # Replace it with the first number in the numbers list.
+            
+        elif operation == "+": # If the operation chosen is addition...
+            numbersTotal = numbersTotal + number # Add the numbers with the numbersTotal.
+            
+        elif operation == "-": # If the operation chosen is subtraction...
+            numbersTotal = numbersTotal - number # Subtract the numbers with the numbersTotal.
+            
+        elif operation == "*": # If the operation chosen is multiplication...
+            numbersTotal = numbersTotal * number # Multiply the numbers with the numbersTotal.
+            
+        elif operation == "/": # If the operation chosen is division...
+            if number != 0: # If any of the numbers are DIFFERENT than 0...
+                numbersTotal = numbersTotal / number # Divide the numbers with the numbersTotal.
+            else: # If it is 0...
+                errorMessages() # Prompt error and quit the program.
+        
+    # Prints the result!
     print("\n>>", numbersTotal, "<<\n")
+    
 
-
-# PRIMARY FUNCTION
-
-# 1. Asks which operation the user wants to perform: +|-|*|/
-print("What operation will you perform?")
-print("Your choices: + (addition), - (subtraction), * (multiplication), / (division).")
-print("Type 'exit' if you would like to quit the application.")
-chosenOperation = input("Operation: ")
-chosenOperationStrip = chosenOperation.strip() # Removes whitespace, maybe the user accidentally put
-# a space after/before inserting the operation type.
-print("") # For better appearance without everything being on top of each other, a space is put.
-
-if (chosenOperationStrip == 'exit'): # If the user typed exit, it quits the application.
-    exit()
-
-# 2. Asks which numbers the user wants to calculate
-if (chosenOperationStrip in VALID_OPERATIONS): 
-    # if the chosen operation is valid in the VALID_OPERATIONS constant, asks to insert numbers.
+# askAmounts(pushOperation) function is used to ask the user for the amounts that will be 
+# calculated. This is the second function that is run, after askOperation().
+def askAmounts(pushOperation):
     print("Insert the amounts you will calculate, separate with ','.")
     userNumbers = input("Numbers: ")
-    userNumbersSplit = userNumbers.split(",") # Splits the numbers by comma
-        
-    try: # Tries to convert the string numbers to integers, if the user put letters it'll be obvious...
+    
+    # This splits the numbers by ',', so it would be a list having the numbers in it.
+    userNumbersSplit = userNumbers.split(",")
+    
+    try: # The program tries to transform the number to an integer.
         userNumbersSplit = [int(numbers) for numbers in userNumbersSplit]
-    except: # and it'll print out an error that points out that you didn't enter a number.
-        print("\n --- Error: you didn't enter a number! --- \n")
-        exit()
+        
+        # If succeeded, it pushes it to the calculation function.
+        calculatorSession(pushOperation, userNumbersSplit)
+    except: # If an error showed up, the errorMessages() is run. Most probably the user entered a letter instead of a number.
+        errorMessages()
+        
+# askOperation() is used to ask the user which operation they want to perform with.
+# It is the first function that is run in this program.
+def askOperation():
+    print("What operation will you perform?")
+    print("Your choices: + (addition), - (subtraction), * (multiplication), / (division).")
+    print("Type 'exit' if you would like to quit the application.")
+    chosenOperation = input("Operation: ")
+    
+    # Removes any whitespace from the input. Sometimes users put a space after/before writing 
+    # which operation they want to perform. It takes care of that issue.
+    chosenOperationStrip = chosenOperation.strip()
+    print("")
+    
+    # For making it more precise, another variable is used throughout the program.
+    userOperation = chosenOperationStrip
+    
+    # If the chosen operation is in the VALID_OPERATIONS constant...
+    if (chosenOperation in VALID_OPERATIONS): 
+        askAmounts(userOperation) # Push it to the askAmounts function.
+    
+    # If the user typed 'exit'...
+    elif (userOperation == 'exit'): 
+        exitProgram() # Exit the program.
+        
+    # If it isn't in the VALID_OPERATIONS constant...
+    else:
+        # If it is in the operation_library dictionary...
+        if userOperation in operation_library:
+            # Replace the userOperation variable value with the sign of the 
+            # operation the user typed as the keyword instead of sign.
+            userOperation = operation_library[userOperation]
+            askAmounts(userOperation) # Push it to the askAmounts function.
+        # If it isn't in the operation_library dictionary...
+        else: 
+            errorMessages() # Prompt the errors. 
 
-    # Push the inputs to the calculatorSession function to start the calculations.
-    calculatorSession(chosenOperationStrip, userNumbersSplit)
-else: # If the chosen operation isn't in the VALID_OPERATIONS constant, it quits the application.
-    print("You didn't insert an operation that the program is capable of calculating as!")
-    exit()
+# The beginning of the program. askOperation() asks the user which operation he/she
+# wants to perform with.
+askOperation()  

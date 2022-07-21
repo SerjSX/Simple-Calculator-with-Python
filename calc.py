@@ -1,11 +1,11 @@
 # This program consists of three important functions:
-#     1. askOperation(): runs first to ask user which operation he/she wants to do.
+#     1. askUser(): runs first to ask user which operation he/she wants to do, and which numbers
+#     to calculate.
 #     2. askAmounts(pushOperation): asks user which numbers to calculate.
-#     3. calculatorSession(operation, numbers): this is where the calculation is being done.
 # 
 # Two secondary tier functions:
 #     1. exitProgram(): used to exit the program when you type "exit" as operation.
-#     2. errorMessages(): prompts to inform about possible error solutions.
+#     2. errorMessages(errorType): prompts to inform about possible error solutions.
 
 # Used for exitProgram() function
 import sys
@@ -29,12 +29,28 @@ operation_library = {
     "division": "/"
     }
 
-# errorMessages() is a function that points out several possible error reasons, to be more precise. 
-def errorMessages():
-    print("Possible Error 1: You didn't type a number. You can't use words as number input.")
-    print("Possible Error 2: The operation you wanted to do is invalid, the program isn't capable of accomplishing it.")
-    print("Possible Error 3: You tried dividing by 0. This isn't possible and results an error.\n")
+error_library = [
+    "noNumbers", "operationInvalid",
+    "divideZero", "missingInput"
+    ]
 
+# errorMessages() is a function that points out several possible error reasons, to be more precise. 
+def errorMessages(errorType):
+    
+    if errorType == "noNumbers":       
+        print("You didn't type a number. You can't use words as number input.")
+        
+    elif errorType == "operationInvalid":
+        print("The operation you wanted to do is invalid, the program isn't capable of accomplishing it.")
+    
+    elif errorType == "divideZero":
+        print("You tried dividing by 0. This isn't possible and results an error.")
+    
+    elif errorType == "missingInput":
+        print("Missing input. You either didn't put an operation type or numbers, or both.")
+        print("You can't put only one number as input, you need at least two.")
+        print("You can't put more than one input in the operation space. Only one type.")
+    
 # exitProgram() function is used for exiting the program.
 def exitProgram():
     sys.exit("Program Exited")
@@ -64,65 +80,63 @@ def calculatorSession(operation, numbers):
             if number != 0: # If any of the numbers are DIFFERENT than 0...
                 numbersTotal = numbersTotal / number # Divide the numbers with the numbersTotal.
             else: # If it is 0...
-                errorMessages() # Prompt error and quit the program.
-        
-    # Prints the result!
-    print("\n>>", numbersTotal, "<<\n")
-    
+                errorMessages(error_library[2]) # Prompt error and quit the program.   
+                numbersTotal = 0 # This assigns meaning that the program shouldn't function anymore.
+       
+    # If the numbersTotal isn't 0, it posts the total number.
+    if numbersTotal != 0:
+        print("\n>> Total:", numbersTotal, "<<\n")
 
-# askAmounts(pushOperation) function is used to ask the user for the amounts that will be 
-# calculated. This is the second function that is run, after askOperation().
-def askAmounts(pushOperation):
-    print("Insert the amounts you will calculate, separate with ','.")
-    userNumbers = input("Numbers: ")
+# askUser() is used to ask the user which operation they want to perform with, and what 
+# numbers it is that they want to calculate. 
+def askUser():
+    print("Enter the numbers | Enter the operation type")
+    print("Example: 40 50 10 | +")
+    userInput = input("> ")
     
-    # This splits the numbers by ',', so it would be a list having the numbers in it.
-    userNumbersSplit = userNumbers.split(",")
+    # Splits the input by / to separate the operations and the numbers
+    userInputSpl = userInput.split("|")
     
-    try: # The program tries to transform the number to an integer.
-        userNumbersSplit = [int(numbers) for numbers in userNumbersSplit]
-        
-        # If succeeded, it pushes it to the calculation function.
-        calculatorSession(pushOperation, userNumbersSplit)
-    except: # If an error showed up, the errorMessages() is run. Most probably the user entered a letter instead of a number.
-        errorMessages()
-        
-# askOperation() is used to ask the user which operation they want to perform with.
-# It is the first function that is run in this program.
-def askOperation():
-    print("What operation will you perform?")
-    print("Your choices: + (addition), - (subtraction), * (multiplication), / (division).")
-    print("Type 'exit' if you would like to quit the application.")
-    chosenOperation = input("Operation: ")
+    # Removes whitespace from both inputs.
+    userInputNumbers = userInputSpl[0].strip()
+    userInputOperation = userInputSpl[1].strip()
     
-    # Removes any whitespace from the input. Sometimes users put a space after/before writing 
-    # which operation they want to perform. It takes care of that issue.
-    chosenOperationStrip = chosenOperation.strip()
-    print("")
+    # Splits the numbers to a separate variable to work on.
+    userInputNumbersSplit = userInputNumbers.split()
     
-    # For making it more precise, another variable is used throughout the program.
-    userOperation = chosenOperationStrip
-    
-    # If the chosen operation is in the VALID_OPERATIONS constant...
-    if (chosenOperation in VALID_OPERATIONS): 
-        askAmounts(userOperation) # Push it to the askAmounts function.
-    
-    # If the user typed 'exit'...
-    elif (userOperation == 'exit'): 
-        exitProgram() # Exit the program.
-        
-    # If it isn't in the VALID_OPERATIONS constant...
+    # If the length of the numbers is greater than 1 (you can't just enter one number), and
+    # the operation input is only equal to one (you can't put more than one input), it...
+    if len(userInputNumbersSplit) > 1 and len(userInputOperation) == 1:
+        try: # tries to transform the number to an integer.
+            userNumbers = [int(numbers) for numbers in userInputNumbersSplit]
+            
+            # If the operation is in the VALID_OPERATIONS constant, it pushes it to the
+            # calculatorSession() function.
+            if userInputOperation in VALID_OPERATIONS:
+                calculatorSession(userInputOperation, userNumbers)
+                
+            # If it isn't...
+            else: 
+                # It checks in the operation_library dictionary, if it's found there
+                # it pushes it again to the calculatorSession() function.
+                if userInputOperation in operation_library:
+                    # Assigns the sign of the formula instead of the typed word.
+                    # For example if the user typed "addition", it pushes "+"
+                    userInputOperation = operation_library[userInputOperation]
+                    calculatorSession(userInputOperation, userNumbers)
+                
+                # If it isn't in the dictionary, then it's an invalid operation type.
+                else:
+                    errorMessages(error_library[1])
+        except: # If an error showed up, most probably the user entered a letter instead of a number.
+            errorMessages(error_library[0])
+    # If the user didn't type more than 2 numbers or/and only one operation, this error pops up.
     else:
-        # If it is in the operation_library dictionary...
-        if userOperation in operation_library:
-            # Replace the userOperation variable value with the sign of the 
-            # operation the user typed as the keyword instead of sign.
-            userOperation = operation_library[userOperation]
-            askAmounts(userOperation) # Push it to the askAmounts function.
-        # If it isn't in the operation_library dictionary...
-        else: 
-            errorMessages() # Prompt the errors. 
+        errorMessages(error_library[3])
+        
+# The beginning of the program. 
+askUser()  
 
-# The beginning of the program. askOperation() asks the user which operation he/she
-# wants to perform with.
-askOperation()  
+
+
+

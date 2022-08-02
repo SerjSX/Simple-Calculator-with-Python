@@ -16,7 +16,8 @@ print("\n--- Welcome to Calculator! ---\n")
 # with. Includes addition +, subtraction -, multiplication *, division /.
 VALID_OPERATIONS = [
     "+", "-",
-    "*", "/"
+    "*", "/",
+    "A",
     ]
 
 # operation_library variable consits of keywords for the signs in the VALID_OPERATIONS constant.
@@ -26,12 +27,13 @@ operation_library = {
     "addition": "+",
     "subtraction": "-",
     "multiplication": "*",
-    "division": "/"
+    "division": "/",
+    "average": "A",
     }
 
 error_library = [
     "noNumbers", "operationInvalid",
-    "divideZero", "missingInput"
+    "divideZero", "missingInput",
     ]
 
 # errorMessages() is a function that points out several possible error reasons, to be more precise. 
@@ -61,45 +63,71 @@ def calculatorSession(operation, numbers):
     
     # This is the total result of the calculation. It is printed when everything is done.
     numbersTotal = 0 
+    numbersTyped = None
+    avCount = 1
     
     # For each number in the numbers paremeter that was pushed from askAmounts function...
     for number in numbers:
-        if numbersTotal == 0: # If the numbersTotal is 0...
+        if numbersTotal == 0 and numbersTyped == None: # If the numbersTotal is 0...
             numbersTotal = number # Replace it with the first number in the numbers list.
+            numbersTyped = str(number)
+
+            if operation == "Av":
+                avCount = avCount + 1
             
         elif operation == "+": # If the operation chosen is addition...
             numbersTotal = numbersTotal + number # Add the numbers with the numbersTotal.
+            numbersTyped = numbersTyped + "+" + str(number)
             
         elif operation == "-": # If the operation chosen is subtraction...
             numbersTotal = numbersTotal - number # Subtract the numbers with the numbersTotal.
+            numbersTyped = numbersTyped + "-" + str(number)
             
         elif operation == "*": # If the operation chosen is multiplication...
             numbersTotal = numbersTotal * number # Multiply the numbers with the numbersTotal.
-            
+            numbersTyped = numbersTyped + "*" + str(number)            
+
         elif operation == "/": # If the operation chosen is division...
             if number != 0: # If any of the numbers are DIFFERENT than 0...
                 numbersTotal = numbersTotal / number # Divide the numbers with the numbersTotal.
+                numbersTyped = numbersTyped + "/" + str(number)
             else: # If it is 0...
                 errorMessages(error_library[2]) # Prompt error and quit the program.   
                 numbersTotal = 0 # This assigns meaning that the program shouldn't function anymore.
+
+        elif operation == "A":
+            numbersTotal = numbersTotal + number
+            numbersTyped = numbersTyped + "+" + str(number)
+            avCount = avCount + 1
+
+    if operation == "A":
+        numbersTyped = numbersTyped + "/" + str(avCount)
+        numbersTotal = numbersTotal / avCount
        
+    if numbersTyped[-1] in VALID_OPERATIONS:
+        del numbersTyped[-1]
+
     # If the numbersTotal isn't 0, it posts the total number.
     if numbersTotal != 0:
-        print("\n>> Total:", numbersTotal, "<<\n")
+        print("\n", numbersTyped, "=", numbersTotal, "\n")
+
 
 # askUser() is used to ask the user which operation they want to perform with, and what 
 # numbers it is that they want to calculate. 
 def askUser():
-    print("Enter the numbers | Enter the operation type")
-    print("Example: 40 50 10 | +")
     userInput = input("> ")
     
     # Splits the input by / to separate the operations and the numbers
     userInputSpl = userInput.split("|")
-    
-    # Removes whitespace from both inputs.
-    userInputNumbers = userInputSpl[0].strip()
-    userInputOperation = userInputSpl[1].strip()
+    userInputFinal = list()
+
+    # Removes whitespace and appends it to a new list
+    for inp in userInputSpl:
+        inptStripped = inp.strip()
+        userInputFinal.append(inptStripped)
+
+    userInputNumbers = userInputFinal[0]
+    userInputOperation = userInputFinal[1]
     
     # Splits the numbers to a separate variable to work on.
     userInputNumbersSplit = userInputNumbers.split()
@@ -135,6 +163,16 @@ def askUser():
         errorMessages(error_library[3])
         
 # The beginning of the program. 
+print("Enter the numbers | Enter the operation type")
+
+print("\n-----------------")
+print("Operation Library")
+print("-----------------")
+for opname in operation_library:
+    print(opname, "[" + operation_library[opname] + "]")
+print("-----------------\n")
+
+print("Example: 40 50 10 | +")
 askUser()  
 
 
